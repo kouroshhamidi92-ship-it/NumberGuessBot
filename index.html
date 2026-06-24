@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>نابغه‌باز | نسخه نهایی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Vazirmatn:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary: #ff8c42;
+            --secondary: #ff2e7d;
+            --accent: #7c4dff;
+            --glass-bg: rgba(12, 20, 35, 0.75);
+            --radius: 2.5rem;
+        }
+        body {
+            font-family: 'Vazirmatn', 'Orbitron', sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0b0e1a, #02040a);
+            color: #f0f3fa;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0.8rem;
+        }
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(255,180,80,0.3), rgba(80,120,255,0.1));
+            animation: floatParticle linear infinite;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0.3) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.9; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) scale(1.1) rotate(720deg); opacity: 0; }
+        }
+        .app-container {
+            position: relative;
+            z-index: 10;
+            max-width: 700px;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border-radius: 3.5rem;
+            padding: 1.5rem 1.2rem 1.8rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,200,100,0.08);
+            border: 1px solid rgba(255,200,100,0.06);
+        }
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 0.8rem;
+        }
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #FFD700, #FF6A2E, #FF2E7D);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.06);
+            padding: 4px 12px 4px 14px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .user-badge img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+        .user-badge .coins {
+            font-weight: 700;
+            color: #FFD700;
+            font-size: 0.85rem;
+        }
+        .screen { display: none; animation: fadeSlide 0.4s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* AUTH */
+        .auth-screen { padding: 1.5rem 0.5rem; text-align: center; }
+        .auth-screen h2 { font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff, #ffb347); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .auth-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #111b2b;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 2rem;
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+        .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 20px rgba(255,140,0,0.15); }
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 3rem;
+            background: linear-gradient(95deg, var(--primary), var(--secondary));
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .auth-btn:active { transform: scale(0.96); }
+        .auth-error { color: #ff4e6e; margin-top: 10px; font-weight: 600; }
+
+        /* INFO PANEL */
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 1rem 0 1.2rem;
+        }
+        .info-card {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 1.8rem;
+            padding: 8px 4px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+        }
+        .info-card i { font-size: 1.3rem; color: var(--primary); display: block; }
+        .info-card .value { font-family: 'Orbitron', monospace; font-size: 1.5rem; font-weight: 900; }
+        .info-card .label { font-size: 0.6rem; opacity: 0.7; }
+
+        .range-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 14px;
+            border-radius: 3rem;
+            align-items: center;
+        }
+        .range-input {
+            width: 70px;
+            padding: 8px 0;
+            text-align: center;
+            background: #1a2538;
+            border: none;
+            border-radius: 2rem;
+            color: #fff;
+            font-weight: bold;
+        }
+        .range-input:focus { outline: none; box-shadow: 0 0 0 3px var(--primary); }
+
+        .guess-area {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.2rem;
+        }
+        .guess-input {
+            flex: 3;
+            background: #0d1422;
+            border: 2px solid var(--primary);
+            border-radius: 3rem;
+            padding: 14px 18px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            font-family: 'Orbitron', monospace;
+            color: #fff;
+            text-align: center;
+        }
+        .guess-input:focus { border-color: var(--secondary); box-shadow: 0 0 25px rgba(255,46,125,0.25); transform: scale(1.02); }
+        .btn {
+            border: none;
+            border-radius: 3rem;
+            padding: 0 22px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        .btn:active { transform: scale(0.92); }
+        .btn-primary { background: linear-gradient(95deg, var(--primary), #ff4e2e); box-shadow: 0 4px 20px rgba(255,80,0,0.35); }
+
+        .message-box {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 14px 16px;
+            text-align: center;
+            margin: 1rem 0;
+            border-right: 5px solid var(--primary);
+            font-weight: 600;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* SHOP */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 1rem 0;
+        }
+        .shop-item {
+            background: rgba(0,0,0,0.5);
+            border-radius: 2rem;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .shop-item i { font-size: 2rem; color: var(--primary); }
+        .shop-item .price { font-weight: 700; color: #FFD700; margin: 4px 0; }
+        .shop-item .buy-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 30px;
+            padding: 4px 14px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .shop-item .buy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* LEADERBOARD */
+        .lb-list {
+            max-height: 200px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+        }
+        .lb-list li {
+            background: rgba(30,50,80,0.5);
+            margin: 6px 0;
+            padding: 10px 16px;
+            border-radius: 2rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+        .lb-list li .score-badge { background: var(--primary); padding: 0 12px; border-radius: 40px; color: #000; }
+
+        /* DUEL */
+        .duel-status { text-align: center; padding: 1rem; background: rgba(0,0,0,0.4); border-radius: 2rem; margin: 1rem 0; }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 4px 8px;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.3rem; }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 1.2rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed rgba(255,200,100,0.15);
+            text-align: center;
+            font-size: 0.6rem;
+            color: #888;
+        }
+        .dev-name { color: var(--primary); font-weight: 700; }
+        .support-card {
+            background: #0a0f1c;
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+            margin: 4px 0;
+        }
+
+        @media (max-width: 500px) {
+            .app-container { padding: 1rem; border-radius: 2rem; }
+            .info-panel { grid-template-columns: repeat(2,1fr); gap: 6px; }
+            .info-card .value { font-size: 1.1rem; }
+            .guess-input { font-size: 1rem; padding: 10px; }
+            .btn { padding: 0 14px; font-size: 0.75rem; }
+            .logo h1 { font-size: 1.1rem; }
+            .shop-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo"><h1><i class="fas fa-microchip" style="color:var(--primary);"></i> نابغه‌باز</h1></div>
+        <div class="user-badge" id="userBadge">
+            <img id="userAvatar" src="https://i.pravatar.cc/32?img=12" alt="avatar">
+            <span id="userNameDisplay" style="font-weight:600;font-size:0.8rem;">مهمان</span>
+            <span class="coins"><i class="fas fa-coins"></i> <span id="userCoins">0</span></span>
+        </div>
+    </div>
+
+    <!-- ========== AUTH SCREEN ========== -->
+    <div class="screen active" id="authScreen">
+        <div class="auth-screen">
+            <h2>🚀 خوش آمدی</h2>
+            <p>با شماره تلفن یا ایمیل ثبت‌نام کن</p>
+            <input type="text" id="authPhone" class="auth-input" placeholder="شماره تلفن یا ایمیل">
+            <input type="password" id="authPass" class="auth-input" placeholder="رمز عبور (حداقل ۴ کاراکتر)">
+            <button class="auth-btn" id="authBtn">ثبت‌نام / ورود</button>
+            <div style="margin-top:10px;font-size:0.8rem;opacity:0.6;">
+                <span id="authToggle">قبلاً ثبت‌نام کردی؟ <a href="#" style="color:var(--primary);">وارد شو</a></span>
+            </div>
+            <div class="auth-error" id="authError"></div>
+        </div>
+    </div>
+
+    <!-- ========== GAME SCREEN ========== -->
+    <div class="screen" id="gameScreen">
+        <div class="info-panel">
+            <div class="info-card"><i class="fas fa-arrow-up"></i><div class="value" id="attemptCount">0</div><div class="label">تلاش</div></div>
+            <div class="info-card"><i class="fas fa-clock"></i><div class="value" id="timerDisplay">00:00</div><div class="label">زمان</div></div>
+            <div class="info-card"><i class="fas fa-trophy"></i><div class="value" id="bestLocal">—</div><div class="label">بهترین</div></div>
+            <div class="info-card"><i class="fas fa-star"></i><div class="value" id="levelDisplay">۱</div><div class="label">مرحله</div></div>
+        </div>
+        <div class="range-box">
+            <input type="number" id="minRange" class="range-input" value="1" min="1">
+            <span>تا</span>
+            <input type="number" id="maxRange" class="range-input" value="100" min="2">
+            <button id="applyRangeBtn" class="btn" style="background:#2c3e50;padding:0 14px;"><i class="fas fa-sync-alt"></i> بروز</button>
+        </div>
+        <div class="guess-area">
+            <input type="number" id="guessInput" class="guess-input" placeholder="عدد..." inputmode="numeric">
+            <button id="guessBtn" class="btn btn-primary"><i class="fas fa-bullseye"></i> حدس</button>
+        </div>
+        <div class="message-box" id="messageBox"><i class="fas fa-comment-dots"></i> عددی بین ۱ تا ۱۰۰ حدس بزن!</div>
+    </div>
+
+    <!-- ========== SHOP ========== -->
+    <div class="screen" id="shopScreen">
+        <h3 style="margin:0.5rem 0;"><i class="fas fa-store"></i> فروشگاه</h3>
+        <div class="shop-grid" id="shopGrid"></div>
+    </div>
+
+    <!-- ========== LEADERBOARD ========== -->
+    <div class="screen" id="leaderboardScreen">
+        <h3 style="margin:0.5rem 0;"><i class="fas fa-crown" style="color:#FFD700;"></i> رتبه‌بندی جهانی</h3>
+        <input type="text" id="rankNameInput" class="auth-input" placeholder="نام شما برای رتبه‌بندی" maxlength="20">
+        <button id="submitRankBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin:8px 0;">ثبت امتیاز در رتبه‌بندی</button>
+        <ul class="lb-list" id="rankList"><li style="justify-content:center;">هنوز امتیازی ثبت نشده</li></ul>
+    </div>
+
+    <!-- ========== DUEL ========== -->
+    <div class="screen" id="duelScreen">
+        <h3 style="margin:0.5rem 0;"><i class="fas fa-swords"></i> مسابقه دوئل (آفلاین)</h3>
+        <div class="duel-status">
+            <div id="duelStatus">🔍 حریف‌یابی...</div>
+            <div style="display:flex;justify-content:center;gap:20px;margin:8px 0;">
+                <span>شما: <strong id="duelYou">—</strong></span>
+                <span>⚔️</span>
+                <span>حریف: <strong id="duelOpponent">—</strong></span>
+            </div>
+            <div id="duelResult" style="font-weight:700;"></div>
+        </div>
+        <button id="duelStartBtn" class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;">شروع دوئل</button>
+        <div id="duelGuessArea" style="display:none;margin-top:10px;">
+            <div class="guess-area">
+                <input type="number" id="duelGuessInput" class="guess-input" placeholder="حدس...">
+                <button id="duelGuessBtn" class="btn btn-primary">حدس</button>
+            </div>
+            <div id="duelMessage" class="message-box" style="margin-top:6px;">منتظر نوبت حریف...</div>
+        </div>
+    </div>
+
+    <!-- ========== BOTTOM NAV ========== -->
+    <div class="bottom-nav">
+        <button class="nav-item active" data-screen="gameScreen"><i class="fas fa-gamepad"></i><span>بازی</span></button>
+        <button class="nav-item" data-screen="shopScreen"><i class="fas fa-store"></i><span>فروشگاه</span></button>
+        <button class="nav-item" data-screen="leaderboardScreen"><i class="fas fa-trophy"></i><span>رتبه</span></button>
+        <button class="nav-item" data-screen="duelScreen"><i class="fas fa-swords"></i><span>دوئل</span></button>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <div class="footer">
+        <div><span class="dev-name"><i class="fas fa-code"></i> کوروش حمیدی</span></div>
+        <div class="support-card"><i class="fas fa-heart" style="color:#ff4e6e;"></i> 5022291532823695</div>
+        <div><span id="appVersion">v7.0.0</span> | <span id="deviceModel">دریافت...</span></div>
+    </div>
+</div>
+
+<script>
+    // ================================================================
+    // STATE (همه چیز در localStorage ذخیره می‌شود)
+    // ================================================================
+    let state = {
+        users: JSON.parse(localStorage.getItem('game_users') || '{}'),
+        currentUser: localStorage.getItem('game_currentUser') || null,
+        coins: 0,
+        bestLocal: Infinity,
+        secretNumber: 0,
+        attempts: 0,
+        gameOver: false,
+        currentMin: 1,
+        currentMax: 100,
+        level: 1,
+        timerInterval: null,
+        startTime: null,
+        elapsed: 0,
+        purchased: JSON.parse(localStorage.getItem('game_purchased') || '[]'),
+        scores: JSON.parse(localStorage.getItem('game_scores') || '[]'),
+        duel: {
+            active: false,
+            number: 0,
+            turn: 'player',
+            playerGuess: null,
+            opponentGuess: null,
+            playerAttempts: 0,
+            opponentAttempts: 0,
+            winner: null
+        }
+    };
+
+    // بارگذاری اطلاعات کاربر فعلی
+    function loadUser(username) {
+        if (state.users[username]) {
+            const data = state.users[username];
+            state.coins = data.coins || 0;
+            state.bestLocal = data.bestScore || Infinity;
+            state.purchased = data.purchased || [];
+            state.level = data.level || 1;
+            localStorage.setItem('game_purchased', JSON.stringify(state.purchased));
+            localStorage.setItem('game_currentUser', username);
+            state.currentUser = username;
+        }
+        updateUI();
+    }
+
+    function saveUser() {
+        if (!state.currentUser) return;
+        state.users[state.currentUser] = {
+            coins: state.coins,
+            bestScore: state.bestLocal,
+            purchased: state.purchased,
+            level: state.level
+        };
+        localStorage.setItem('game_users', JSON.stringify(state.users));
+    }
+
+    // ================================================================
+    // UI UPDATES
+    // ================================================================
+    function updateUI() {
+        document.getElementById('userCoins').innerText = state.coins;
+        document.getElementById('bestLocal').innerText = state.bestLocal === Infinity ? '—' : state.bestLocal;
+        document.getElementById('levelDisplay').innerText = state.level;
+        if (state.currentUser) {
+            document.getElementById('userNameDisplay').innerText = state.currentUser;
+            document.getElementById('userBadge').style.display = 'flex';
+        } else {
+            document.getElementById('userBadge').style.display = 'none';
+        }
+        renderShop();
+    }
+
+    function renderShop() {
+        const shopItems = [
+            { id: 'gold', icon: 'fa-palette', name: 'تم طلایی', price: 50 },
+            { id: 'dark', icon: 'fa-moon', name: 'تم شب', price: 30 },
+            { id: 'hint', icon: 'fa-lightbulb', name: 'راهنما (۵ بار)', price: 20 },
+            { id: 'time', icon: 'fa-clock', name: 'زمان اضافه', price: 15 },
+            { id: 'skip', icon: 'fa-forward', name: 'رد مرحله', price: 25 },
+            { id: 'double', icon: 'fa-2x', name: 'سکه دوبرابر', price: 40 },
+            { id: 'heart', icon: 'fa-heart', name: '+۵ سکه روزانه', price: 10 },
+            { id: 'shield', icon: 'fa-shield', name: 'حفاظت خطا', price: 35 },
+            { id: 'boost', icon: 'fa-rocket', name: 'شتاب زمان', price: 45 }
+        ];
+        const grid = document.getElementById('shopGrid');
+        grid.innerHTML = '';
+        shopItems.forEach(item => {
+            const owned = state.purchased.includes(item.id);
+            const div = document.createElement('div');
+            div.className = 'shop-item';
+            div.innerHTML = `
+                <i class="fas ${item.icon}"></i>
+                <div style="font-size:0.8rem;font-weight:600;">${item.name}</div>
+                <div class="price">${owned ? '✅ خریداری شد' : '🪙 '+item.price}</div>
+                <button class="buy-btn" data-id="${item.id}" data-price="${item.price}" ${owned ? 'disabled' : ''}>
+                    ${owned ? 'دارید' : 'خرید'}
+                </button>
+            `;
+            grid.appendChild(div);
+        });
+        document.querySelectorAll('.buy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.id;
+                const price = parseInt(btn.dataset.price);
+                if (state.purchased.includes(id)) return alert('این آیتم قبلاً خریداری شده!');
+                if (state.coins < price) return alert('سکه کافی نیست!');
+                state.coins -= price;
+                state.purchased.push(id);
+                localStorage.setItem('game_purchased', JSON.stringify(state.purchased));
+                saveUser();
+                updateUI();
+                alert('🎉 خریداری شد!');
+            });
+        });
+    }
+
+    // ================================================================
+    // GAME CORE
+    // ================================================================
+    function newGame() {
+        state.secretNumber = Math.floor(Math.random() * (state.currentMax - state.currentMin + 1)) + state.currentMin;
+        state.attempts = 0;
+        state.gameOver = false;
+        document.getElementById('attemptCount').innerText = '0';
+        if (state.timerInterval) clearInterval(state.timerInterval);
+        state.startTime = Date.now();
+        state.timerInterval = setInterval(() => {
+            const diff = Math.floor((Date.now() - state.startTime) / 1000);
+            const m = String(Math.floor(diff / 60)).padStart(2, '0');
+            const s = String(diff % 60).padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+        }, 200);
+        document.getElementById('messageBox').innerHTML = `<i class="fas fa-rocket"></i> مرحله ${state.level} | بین ${state.currentMin} تا ${state.currentMax} حدس بزن`;
+        document.getElementById('guessInput').value = '';
+        document.getElementById('guessInput').disabled = false;
+        document.getElementById('guessBtn').disabled = false;
+        document.getElementById('guessInput').focus();
+    }
+
+    function handleGuess() {
+        if (state.gameOver) { newGame(); return; }
+        const guess = parseInt(document.getElementById('guessInput').value);
+        if (isNaN(guess)) {
+            document.getElementById('messageBox').innerHTML = `<i class="fas fa-question-circle"></i> عدد معتبر وارد کن`;
+            return;
+        }
+        if (guess < state.currentMin || guess > state.currentMax) {
+            document.getElementById('messageBox').innerHTML = `<i class="fas fa-ban"></i> بین ${state.currentMin} تا ${state.currentMax}`;
+            return;
+        }
+        state.attempts++;
+        document.getElementById('attemptCount').innerText = state.attempts;
+
+        if (guess === state.secretNumber) {
+            state.gameOver = true;
+            clearInterval(state.timerInterval);
+            const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+            const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const s = String(elapsed % 60).padStart(2, '0');
+            let rating = state.attempts < 5 ? '🏆 نابغه' : state.attempts <= 10 ? '😎 حرفه‌ای' : '👍 خوب';
+            document.getElementById('messageBox').innerHTML = `<i class="fas fa-crown"></i> 🎉 ${rating} | عدد ${state.secretNumber} در ${state.attempts} تلاش (${m}:${s})`;
+            document.getElementById('guessInput').disabled = true;
+            document.getElementById('guessBtn').disabled = true;
+
+            if (state.attempts < state.bestLocal) {
+                state.bestLocal = state.attempts;
+                saveUser();
+                document.getElementById('bestLocal').innerText = state.bestLocal;
+                document.getElementById('messageBox').innerHTML += `<br>🔥 رکورد شخصی شکسته شد!`;
+            }
+            const reward = Math.max(10, 30 - state.attempts);
+            state.coins += reward;
+            saveUser();
+            document.getElementById('userCoins').innerText = state.coins;
+            document.getElementById('messageBox').innerHTML += `<br>🪙 +${reward} سکه`;
+
+            if (state.attempts <= 10) {
+                state.level++;
+                state.currentMax = Math.min(1000, state.currentMax + 50);
+                document.getElementById('maxRange').value = state.currentMax;
+                document.getElementById('levelDisplay').innerText = state.level;
+                setTimeout(() => { newGame(); }, 2000);
+            }
+            return;
+        }
+        const hint = guess < state.secretNumber ? '⬆️ بالاتر' : '⬇️ پایین‌تر';
+        document.getElementById('messageBox').innerHTML = `<i class="fas fa-lightbulb"></i> ${hint} (حدس ${guess})`;
+        document.getElementById('guessInput').value = '';
+        document.getElementById('guessInput').focus();
+    }
+
+    // ================================================================
+    // AUTH SYSTEM (محلی)
+    // ================================================================
+    let isLogin = false;
+
+    document.getElementById('authToggle').addEventListener('click', (e) => {
+        e.preventDefault();
+        isLogin = !isLogin;
+        document.getElementById('authToggle').innerHTML = isLogin ?
+            'ثبت‌نام نکردی؟ <a href="#" style="color:var(--primary);">ثبت‌نام کن</a>' :
+            'قبلاً ثبت‌نام کردی؟ <a href="#" style="color:var(--primary);">وارد شو</a>';
+        document.getElementById('authBtn').innerText = isLogin ? 'ورود' : 'ثبت‌نام';
+    });
+
+    document.getElementById('authBtn').addEventListener('click', () => {
+        const username = document.getElementById('authPhone').value.trim();
+        const pass = document.getElementById('authPass').value.trim();
+        const errorEl = document.getElementById('authError');
+        errorEl.innerText = '';
+        if (!username || pass.length < 4) {
+            errorEl.innerText = 'لطفاً اطلاعات را کامل و رمز حداقل ۴ کاراکتر وارد کنید';
+            return;
+        }
+        if (isLogin) {
+            if (!state.users[username] || state.users[username].password !== pass) {
+                errorEl.innerText = 'نام کاربری یا رمز اشتباه است';
+                return;
+            }
+            loadUser(username);
+            document.getElementById('userNameDisplay').innerText = username;
+            showScreen('gameScreen');
+            newGame();
+        } else {
+            if (state.users[username]) {
+                errorEl.innerText = 'این کاربر قبلاً ثبت‌نام کرده';
+                return;
+            }
+            state.users[username] = {
+                password: pass,
+                coins: 100,
+                bestScore: Infinity,
+                purchased: [],
+                level: 1
+            };
+            localStorage.setItem('game_users', JSON.stringify(state.users));
+            loadUser(username);
+            document.getElementById('userNameDisplay').innerText = username;
+            showScreen('gameScreen');
+            newGame();
+        }
+    });
+
+    // ================================================================
+    // LEADERBOARD (محلی)
+    // ================================================================
+    function loadLeaderboard() {
+        const list = document.getElementById('rankList');
+        list.innerHTML = '';
+        if (state.scores.length === 0) {
+            list.innerHTML = '<li style="justify-content:center;">🌟 اولین نفر باش!</li>';
+            return;
+        }
+        const sorted = [...state.scores].sort((a, b) => a.score - b.score);
+        sorted.slice(0, 20).forEach((item, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${idx+1}. ${item.name}</span> <span class="score-badge">🎯 ${item.score}</span>`;
+            list.appendChild(li);
+        });
+    }
+
+    document.getElementById('submitRankBtn').addEventListener('click', () => {
+        if (!state.currentUser) return alert('ابتدا وارد شوید');
+        if (!state.gameOver || state.attempts === 0) return alert('یک بازی رو کامل کن');
+        const name = document.getElementById('rankNameInput').value.trim() || state.currentUser;
+        state.scores.push({ name, score: state.attempts, timestamp: Date.now() });
+        localStorage.setItem('game_scores', JSON.stringify(state.scores));
+        alert('✅ امتیاز شما ثبت شد!');
+        loadLeaderboard();
+    });
+
+    // ================================================================
+    // DUEL (آفلاین)
+    // ================================================================
+    let duelActive = false;
+
+    document.getElementById('duelStartBtn').addEventListener('click', () => {
+        if (!state.currentUser) return alert('ابتدا وارد شوید');
+        if (duelActive) return;
+        duelActive = true;
+        state.duel = {
+            active: true,
+            number: Math.floor(Math.random() * 100) + 1,
+            turn: 'player',
+            playerGuess: null,
+            opponentGuess: null,
+            playerAttempts: 0,
+            opponentAttempts: 0,
+            winner: null
+        };
+        document.getElementById('duelStatus').innerHTML = '🤖 حریف: ربات هوشمند';
+        document.getElementById('duelYou').innerText = state.currentUser;
+        document.getElementById('duelOpponent').innerText = 'ربات';
+        document.getElementById('duelGuessArea').style.display = 'block';
+        document.getElementById('duelResult').innerHTML = '';
+        document.getElementById('duelMessage').innerHTML = '🎯 نوبت شماست، عددی حدس بزنید';
+        document.getElementById('duelGuessInput').disabled = false;
+        document.getElementById('duelGuessBtn').disabled = false;
+        document.getElementById('duelGuessInput').value = '';
+        document.getElementById('duelGuessInput').focus();
+    });
+
+    document.getElementById('duelGuessBtn').addEventListener('click', () => {
+        if (!duelActive || !state.duel.active) return;
+        if (state.duel.turn !== 'player') {
+            document.getElementById('duelMessage').innerHTML = '⏳ منتظر نوبت حریف...';
+            return;
+        }
+        const guess = parseInt(document.getElementById('duelGuessInput').value);
+        if (isNaN(guess)) return alert('عدد معتبر وارد کن');
+        state.duel.playerAttempts++;
+        state.duel.playerGuess = guess;
+        document.getElementById('duelGuessInput').value = '';
+
+        // چک حدس بازیکن
+        if (guess === state.duel.number) {
+            state.duel.winner = 'player';
+            document.getElementById('duelResult').innerHTML = '🎉 شما برنده شدید! +۳۰ سکه';
+            state.coins += 30;
+            saveUser();
+            document.getElementById('userCoins').innerText = state.coins;
+            document.getElementById('duelMessage').innerHTML = `🎯 درست! عدد ${state.duel.number} بود`;
+            endDuel();
+            return;
+        }
+
+        // نوبت ربات
+        state.duel.turn = 'opponent';
+        document.getElementById('duelMessage').innerHTML = '🤖 ربات در حال فکر کردن...';
+        document.getElementById('duelGuessInput').disabled = true;
+        document.getElementById('duelGuessBtn').disabled = true;
+
+        setTimeout(() => {
+            // هوش مصنوعی ساده ربات
+            let botGuess;
+            let min = 1, max = 100;
+            if (state.duel.playerGuess < state.duel.number) min = state.duel.playerGuess + 1;
+            else max = state.duel.playerGuess - 1;
+            botGuess = Math.floor(Math.random() * (max - min + 1)) + min;
+            state.duel.opponentAttempts++;
+            state.duel.opponentGuess = botGuess;
+
+            if (botGuess === state.duel.number) {
+                state.duel.winner = 'opponent';
+                document.getElementById('duelResult').innerHTML = '😢 ربات برنده شد!';
+                document.getElementById('duelMessage').innerHTML = `ربات حدس زد: ${botGuess} (درست!)`;
+                endDuel();
+                return;
+            }
+
+            document.getElementById('duelMessage').innerHTML = `🤖 ربات حدس زد: ${botGuess} | نوبت شماست`;
+            state.duel.turn = 'player';
+            document.getElementById('duelGuessInput').disabled = false;
+            document.getElementById('duelGuessBtn').disabled = false;
+            document.getElementById('duelGuessInput').focus();
+        }, 800);
+    });
+
+    function endDuel() {
+        duelActive = false;
+        state.duel.active = false;
+        document.getElementById('duelGuessInput').disabled = true;
+        document.getElementById('duelGuessBtn').disabled = true;
+        document.getElementById('duelStatus').innerHTML = '🏁 بازی دوئل تمام شد';
+        setTimeout(() => {
+            document.getElementById('duelGuessArea').style.display = 'none';
+        }, 2000);
+    }
+
+    // ================================================================
+    // NAVIGATION
+    // ================================================================
+    const screens = ['authScreen', 'gameScreen', 'shopScreen', 'leaderboardScreen', 'duelScreen'];
+    function showScreen(id) {
+        screens.forEach(s => document.getElementById(s).classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => {
+            n.classList.toggle('active', n.dataset.screen === id);
+        });
+        if (id === 'leaderboardScreen') loadLeaderboard();
+        if (id === 'shopScreen') renderShop();
+    }
+
+    document.querySelectorAll('.nav-item').forEach(n => {
+        n.addEventListener('click', () => {
+            if (n.dataset.screen === 'authScreen') return;
+            if (!state.currentUser) { showScreen('authScreen'); return; }
+            showScreen(n.dataset.screen);
+        });
+    });
+
+    // ================================================================
+    // EVENTS
+    // ================================================================
+    document.getElementById('guessBtn').addEventListener('click', handleGuess);
+    document.getElementById('guessInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleGuess(); });
+    document.getElementById('applyRangeBtn').addEventListener('click', () => {
+        const min = parseInt(document.getElementById('minRange').value);
+        const max = parseInt(document.getElementById('maxRange').value);
+        if (isNaN(min) || isNaN(max) || min >= max) {
+            document.getElementById('messageBox').innerHTML = `<i class="fas fa-exclamation-triangle"></i> بازه نامعتبر!`;
+            return;
+        }
+        state.currentMin = min;
+        state.currentMax = max;
+        newGame();
+    });
+
+    // ================================================================
+    // PARTICLES & ANIMATIONS
+    // ================================================================
+    for (let i = 0; i < 200; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 18 + 3;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = Math.random() * 15 + 6 + 's';
+        p.style.animationDelay = Math.random() * 12 + 's';
+        p.style.opacity = Math.random() * 0.4 + 0.1;
+        document.body.appendChild(p);
+    }
+
+    gsap.from('.app-container', { opacity: 0, scale: 0.95, duration: 1, ease: 'power3.out' });
+    gsap.from('.info-card', { y: 30, opacity: 0, duration: 0.6, stagger: 0.08, delay: 0.2 });
+    gsap.from('.guess-area', { y: 20, opacity: 0, duration: 0.5, delay: 0.4 });
+    gsap.from('.bottom-nav .nav-item', { y: 20, opacity: 0, duration: 0.4, stagger: 0.06, delay: 0.6 });
+
+    // ================================================================
+    // INIT
+    // ================================================================
+    document.getElementById('appVersion').innerText = 'v7.0.0';
+    const ua = navigator.userAgent;
+    let device = "مرورگر";
+    if (/Android/i.test(ua)) device = "اندروید 📱";
+    else if (/iPhone|iPad/i.test(ua)) device = "iOS 🍏";
+    else if (/Windows/i.test(ua)) device = "ویندوز 💻";
+    document.getElementById('deviceModel').innerText = device;
+
+    if (state.currentUser && state.users[state.currentUser]) {
+        loadUser(state.currentUser);
+        showScreen('gameScreen');
+        newGame();
+    } else {
+        showScreen('authScreen');
+    }
+
+    console.log('✅ نابغه‌باز نسخه نهایی | توسعه‌دهنده: کوروش حمیدی');
+    console.log('💳 شماره کارت جهت حمایت: 5022291532823695');
+    console.log('بیش از +500 انیمیشن حرکتی');
+    console.log('برای خرید سورس بازی پیام دهید');
+    console.log('برای فعال کردن و یا ساخت ربات های تلگرام | روبیکا | بله و... پیام دهید')
+    console.log('شماره تلفن همراه 09386079726');
+    console.log('باتشکر از شما بازیکن عزیز');
+</script>
+</body>
+</html>
