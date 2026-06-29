@@ -4,17 +4,29 @@ import random
 import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
-from game_core import GameCore
+from game_core_of_bot import GameCore
 
 # ======================== تنظیمات ========================
-PLATFORM = os.getenv("PLATFORM", "telegram")
-
+try:
+    PLATFORM = os.getenv("PLATFORM", "telegram")
+except:
+    try:
+        PLATFORM = input(str("bale/telegram"))
+    except:
+        PLATFORM = "telegram"
+        
 if PLATFORM == "bale":
     BASE_URL = "https://tapi.bale.ai/bot"
-    BOT_TOKEN = os.getenv("BALE_BOT_TOKEN")
+    try:
+        BOT_TOKEN = os.getenv("BALE_BOT_TOKEN")
+    except:
+        BOT_TOKEN = input(str("BALE_BOT_TOKEN"))
 else:
     BASE_URL = None
-    BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    try:
+        BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    except:
+        BOT_TOKEN = input(str("TELEGRAM_BOT_TOKEN"))
 
 print(f"🤖 ربات در حالت {PLATFORM} راه‌اندازی می‌شود...")
 
