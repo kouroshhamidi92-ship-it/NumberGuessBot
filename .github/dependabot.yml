@@ -1,0 +1,91 @@
+version: 2
+updates:
+
+  # ============================================
+  # Python Dependencies (pip)
+  # ============================================
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Asia/Tehran"
+    target-branch: "main"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "⬆️ pip"
+      include: "scope"
+    reviewers:
+      - "kouroshhamidi92-ship-it"
+    assignees:
+      - "kouroshhamidi92-ship-it"
+    open-pull-requests-limit: 10
+    versioning-strategy: "auto"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      - dependency-name: "pyqt6"
+        update-types:
+          - "version-update:semver-major"
+    groups:
+      python-prod:
+        patterns:
+          - "flask"
+          - "gunicorn"
+          - "python-telegram-bot"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ============================================
+  # GitHub Actions Dependencies
+  # ============================================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tehran"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "⬆️ github-actions"
+      include: "scope"
+    reviewers:
+      - "kouroshhamidi92-ship-it"
+
+  # ============================================
+  # NPM Dependencies (for web version)
+  # ============================================
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "10:00"
+      timezone: "Asia/Tehran"
+    target-branch: "main"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "⬆️ npm"
+      include: "scope"
+    reviewers:
+      - "kouroshhamidi92-ship-it"
+    open-pull-requests-limit: 10
+    versioning-strategy: "auto"
+    groups:
+      web-prod:
+        patterns:
+          - "gsap"
+          - "firebase*"
+        update-types:
+          - "minor"
+          - "patch"
