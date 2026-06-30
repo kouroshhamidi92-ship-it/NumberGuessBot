@@ -1,5 +1,3 @@
----
-
 # 🎯 NumberGuessBot | نابغه‌باز
 
 > 🤖 Smart Number Guessing Game with Coin System, Shop, AI Duels & Global Leaderboard  
