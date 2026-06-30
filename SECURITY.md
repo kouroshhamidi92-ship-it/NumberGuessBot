@@ -26,7 +26,7 @@ We use GitHub's private vulnerability reporting feature to securely receive and 
 
 If you are unable to use GitHub's private reporting, you may send an email to:
 
-**kouroshhamidi92@gmail.com**
+**kourosh.hamidi92@gmail.com**
 
 Please include the following information in your report:
 
