@@ -7,26 +7,14 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Mess
 from game_core_of_bot import GameCore
 
 # ======================== تنظیمات ========================
-try:
-    PLATFORM = os.getenv("PLATFORM", "telegram")
-except:
-    try:
-        PLATFORM = input(str("bale/telegram"))
-    except:
-        PLATFORM = "telegram"
-        
+PLATFORM = os.getenv("PLATFORM", "telegram")
+
 if PLATFORM == "bale":
     BASE_URL = "https://tapi.bale.ai/bot"
-    try:
-        BOT_TOKEN = os.getenv("BALE_BOT_TOKEN")
-    except:
-        BOT_TOKEN = input(str("BALE_BOT_TOKEN"))
+    BOT_TOKEN = os.getenv("BALE_BOT_TOKEN")
 else:
-    BASE_URL = None
-    try:
-        BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-    except:
-        BOT_TOKEN = input(str("TELEGRAM_BOT_TOKEN"))
+    BASE_URL = None  # برای تلگرام نیازی به base_url نیست
+    BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 print(f"🤖 ربات در حالت {PLATFORM} راه‌اندازی می‌شود...")
 
@@ -352,35 +340,33 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(result["message"], reply_markup=get_main_menu())
 
-# ======================== تابع اصلی اصلاح‌شده با await ========================
+# ======================== تابع اصلی اصلاح‌شده ========================
 def main():
     """تابع اصلی اجرای ربات"""
-    async def run():
-        try:
-            builder = Application.builder().token(BOT_TOKEN)
-            if BASE_URL:
-                builder = builder.base_url(BASE_URL)
-            application = builder.build()
+    try:
+        # ✅ ساخت Application با توجه به BASE_URL (اگر None بود، base_url را تنظیم نکن)
+        builder = Application.builder().token(BOT_TOKEN)
+        if BASE_URL:
+            builder = builder.base_url(BASE_URL)
+        application = builder.build()
 
-            application.add_handler(CommandHandler("start", start))
-            application.add_handler(CommandHandler("newgame", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CommandHandler("status", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CommandHandler("shop", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CommandHandler("leaderboard", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CommandHandler("duel", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CommandHandler("range", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CommandHandler("help", lambda u,c: handle_callback(u.update(c), c)))
-            application.add_handler(CallbackQueryHandler(handle_callback))
-            application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+        # اضافه کردن هندلرها
+        application.add_handler(CommandHandler("start", start))
+        application.add_handler(CommandHandler("newgame", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CommandHandler("status", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CommandHandler("shop", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CommandHandler("leaderboard", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CommandHandler("duel", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CommandHandler("range", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CommandHandler("help", lambda u,c: handle_callback(u.update(c), c)))
+        application.add_handler(CallbackQueryHandler(handle_callback))
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-            print(f"🤖 ربات {PLATFORM} روشن شد...")
-            # ✅ اصلاح: اضافه کردن await
-            await application.run_polling(allowed_updates=["message", "callback_query"])
-        except Exception as e:
-            print(f"❌ خطا در اجرای ربات: {e}")
-            raise
-
-    asyncio.run(run())
+        print(f"🤖 ربات {PLATFORM} روشن شد...")
+        application.run_polling(allowed_updates=["message", "callback_query"])
+    except Exception as e:
+        print(f"❌ خطا در اجرای ربات: {e}")
+        raise
 
 if __name__ == "__main__":
     main()
